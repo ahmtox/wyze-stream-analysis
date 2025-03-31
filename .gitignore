@@ -1,0 +1,5 @@
+/Wyze x HCCF Prompt
+.env
+anomaly_dataset_test.csv
+__pycache__
+.venv

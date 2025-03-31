@@ -1,0 +1,4 @@
+  paths:
+    mystream:
+      source: publisher
+
