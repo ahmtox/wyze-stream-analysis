@@ -240,25 +240,25 @@ def list_videos():
         },
         {
             "id": "cat_food",
-            "name": "Kitchen Cam",
+            "name": "Cat Cam",  # Changed from Kitchen Cam
             "filename": "cat_food.mp4", 
             "description": "Cat food monitoring"
         },
         {
             "id": "gauge",
-            "name": "Utility Cam",
+            "name": "Gauge Cam",  # Changed from Utility Cam
             "filename": "gauge.mp4",
             "description": "Gauge monitoring"
         },
         {
             "id": "pedestrians",
-            "name": "Front Door Cam",
+            "name": "Street Cam",  # Changed from Front Door Cam
             "filename": "pedestrians.mp4", 
             "description": "Pedestrians on sidewalk"
         },
         {
             "id": "thermometer",
-            "name": "Weather Cam",
+            "name": "Thermometer Cam",  # Changed from Weather Cam
             "filename": "thermometer.mp4",
             "description": "Temperature monitoring"
         },
