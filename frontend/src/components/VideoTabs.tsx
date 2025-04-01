@@ -1,5 +1,3 @@
-import React from 'react';
-
 export interface VideoSource {
   id: string;
   name: string;

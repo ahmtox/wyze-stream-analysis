@@ -11,7 +11,9 @@ interface VideoPlayerProps {
   videoSource?: VideoSource;
   onPeopleCountChange?: (count: number) => void;
   isPeopleDetectionEnabled?: boolean;
+  showDetectionOverlay?: boolean;
   onTogglePeopleDetection?: () => void;
+  onToggleOverlay?: () => void;
 }
 
 export interface VideoPlayerHandle {
@@ -24,7 +26,7 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(({
   videoSource,
   onPeopleCountChange,
   isPeopleDetectionEnabled = false,
-  onTogglePeopleDetection
+  showDetectionOverlay = true,
 }, ref) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const hlsRef = useRef<Hls | null>(null);
@@ -86,9 +88,6 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(({
     setError(null);
     setErrorDetails(null);
     
-    // Enable people detection for HLS streams only
-    setIsPeopleDetectionEnabled(Boolean(isHls));
-    
     // Get random connection time between 1-5 seconds
     const connectionTime = Math.floor(Math.random() * 4000) + 1000;
     console.log(`Simulating connection for ${connectionTime}ms`);
@@ -119,14 +118,14 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(({
             console.log('HLS: Media attached');
           });
           
-          hls.on(Hls.Events.MANIFEST_PARSED, (event, data) => {
+          hls.on(Hls.Events.MANIFEST_PARSED, (_event, data) => {
             console.log(`HLS: Manifest parsed, found ${data.levels.length} quality levels`);
             videoElement.play().catch(err => {
               console.warn('HLS: Autoplay prevented:', err);
             });
           });
           
-          hls.on(Hls.Events.ERROR, (event, data) => {
+          hls.on(Hls.Events.ERROR, (_event, data) => {
             console.error('HLS error:', data);
             
             // Create helpful error message based on error type
@@ -271,13 +270,8 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(({
     { name: "Big Bunny Test Stream", url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8" },
     { name: "CBS News", url: "https://dai.google.com/linear/hls/pa/event/Sid4xiTQTkCT1SLu6rjUSQ/stream/ba5c124f-4fcb-4cb9-a8c9-6575bad90508:DLS/variant/df9d5f9fc8201f0878fd4a77927eea3b/bandwidth/3016996.m3u8" },
     { name: "ABC Live", url: "https://content-dtci.uplynk.com/channel/3324f2467c414329b3b0cc5cd987b6be.m3u8" },
-    { name: "Times Square", url: "https://videos-3.earthcam.com/fecnetwork/hdtimes10.flv/chunklist_w609968167.m3u8" }
+    { name: "Times Square", url: "https://videos-3.earthcam.com/fecnetwork/hdtimes10.flv/playlist.m3u8" }
   ];
-
-  // Toggle people detection
-  const togglePeopleDetection = () => {
-    setIsPeopleDetectionEnabled(!isPeopleDetectionEnabled);
-  };
 
   return (
     <div className="relative w-full aspect-video bg-black rounded-lg overflow-hidden">
@@ -390,10 +384,11 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(({
       />
       
       {/* People detection overlay */}
-      {videoSource?.isHlsStream && !error && !connecting && !loading && (
+      {videoSource?.isHlsStream && !error && !connecting && !loading && videoRef.current && (
         <PeopleDetection 
-          videoRef={videoRef}
+          videoRef={videoRef as React.RefObject<HTMLVideoElement>}
           isEnabled={isPeopleDetectionEnabled}
+          showOverlay={showDetectionOverlay}
           onPeopleCountChange={onPeopleCountChange}
         />
       )}

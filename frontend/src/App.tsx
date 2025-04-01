@@ -18,6 +18,7 @@ function App() {
   const [isAddStreamModalOpen, setIsAddStreamModalOpen] = useState(false);
   const [peopleCount, setPeopleCount] = useState(0);
   const [isPeopleDetectionEnabled, setIsPeopleDetectionEnabled] = useState(false);
+  const [showDetectionOverlay, setShowDetectionOverlay] = useState(true);
 
   // Reference to the video player component to access snapshot method
   const videoPlayerRef = useRef<VideoPlayerHandle>(null);
@@ -56,9 +57,12 @@ function App() {
     setPeopleCount(count);
   }, []);
 
-  const handleTabChange = (videoId: string) => {
-    setActiveVideoId(videoId);
-  };
+  const handleTabChange = useCallback((id: string) => {
+    setActiveVideoId(id);
+    setCurrentTime(0);
+    setIsPeopleDetectionEnabled(false); // Disable people detection when switching cameras
+    setPeopleCount(0); // Reset people count
+  }, []);
   
   const handleAddStreamClick = () => {
     setIsAddStreamModalOpen(true);
@@ -107,6 +111,10 @@ function App() {
 
   const togglePeopleDetection = useCallback(() => {
     setIsPeopleDetectionEnabled(prev => !prev);
+  }, []);
+
+  const toggleDetectionOverlay = useCallback(() => {
+    setShowDetectionOverlay(prev => !prev);
   }, []);
 
   const loadHistory = useCallback(async () => {
@@ -227,10 +235,12 @@ function App() {
               videoSource={getCurrentVideoSource()}
               onPeopleCountChange={handlePeopleCountChange}
               isPeopleDetectionEnabled={isPeopleDetectionEnabled}
+              showDetectionOverlay={showDetectionOverlay}
               onTogglePeopleDetection={togglePeopleDetection}
+              onToggleOverlay={toggleDetectionOverlay}
             />
 
-            {getCurrentVideoSource()?.isHlsStream && (
+            {getCurrentVideoSource()?.isHlsStream && isPeopleDetectionEnabled && (
               <div className="mt-2 bg-gray-800 text-white py-2 px-4 rounded-md flex items-center justify-between">
                 <span className="flex items-center">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -301,7 +311,9 @@ function App() {
               isProcessing={isProcessing}
               isLiveStream={getCurrentVideoSource()?.isHlsStream || false}
               isPeopleDetectionEnabled={isPeopleDetectionEnabled}
+              showDetectionOverlay={showDetectionOverlay}
               onTogglePeopleDetection={getCurrentVideoSource()?.isHlsStream ? togglePeopleDetection : undefined}
+              onToggleOverlay={getCurrentVideoSource()?.isHlsStream && isPeopleDetectionEnabled ? toggleDetectionOverlay : undefined}
             />
             
             {/* Show HLS stream info if current source is HLS */}

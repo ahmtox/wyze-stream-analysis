@@ -54,7 +54,7 @@ export default function AddStreamModal({ isOpen, onClose, onAddStream }: AddStre
     'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8',
     'https://dai.google.com/linear/hls/pa/event/Sid4xiTQTkCT1SLu6rjUSQ/stream/ba5c124f-4fcb-4cb9-a8c9-6575bad90508:DLS/variant/df9d5f9fc8201f0878fd4a77927eea3b/bandwidth/3016996.m3u8',
     'https://content-dtci.uplynk.com/channel/3324f2467c414329b3b0cc5cd987b6be.m3u8',
-    'https://videos-3.earthcam.com/fecnetwork/hdtimes10.flv/chunklist_w609968167.m3u8'
+    'https://videos-3.earthcam.com/fecnetwork/hdtimes10.flv/playlist.m3u8'
   ];
   
   return (
