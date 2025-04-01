@@ -4,10 +4,16 @@ import VideoTabs, { VideoSource } from './components/VideoTabs';
 import AnalysisControls from './components/AnalysisControls';
 import AnalysisHistory from './components/AnalysisHistory';
 import AddStreamModal from './components/AddStreamModal';
+import PeopleDetectionGraph from './components/PeopleDetectionGraph';
 import api from './services/api';
 import type { AnalysisResult } from './services/api';
 
 function App() {
+  interface PeopleDataPoint {
+    timestamp: number;
+    count: number;
+  }  
+
   const [currentTime, setCurrentTime] = useState(0);
   const [analysisHistory, setAnalysisHistory] = useState<AnalysisResult[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -19,6 +25,8 @@ function App() {
   const [peopleCount, setPeopleCount] = useState(0);
   const [isPeopleDetectionEnabled, setIsPeopleDetectionEnabled] = useState(false);
   const [showDetectionOverlay, setShowDetectionOverlay] = useState(true);
+  const [peopleCountHistory, setPeopleCountHistory] = useState<PeopleDataPoint[]>([]);
+  const [detectionSessionId, setDetectionSessionId] = useState<string>('initial');
 
   // Reference to the video player component to access snapshot method
   const videoPlayerRef = useRef<VideoPlayerHandle>(null);
@@ -55,13 +63,40 @@ function App() {
 
   const handlePeopleCountChange = useCallback((count: number) => {
     setPeopleCount(count);
-  }, []);
-
+    
+    // Only add data points when detection is enabled
+    if (isPeopleDetectionEnabled) {
+      // Use functional updates to avoid stale closure issues
+      setPeopleCountHistory(prev => {
+        // Prevent duplicate entries at the same timestamp
+        const now = Date.now();
+        const newPoint = { timestamp: now, count };
+        
+        // If there's already a point with the same timestamp (within 50ms), update it instead
+        const lastPoint = prev.length > 0 ? prev[prev.length - 1] : null;
+        if (lastPoint && Math.abs(now - lastPoint.timestamp) < 50) {
+          const updatedHistory = [...prev.slice(0, -1), newPoint];
+          return updatedHistory;
+        }
+        
+        // Otherwise add a new point
+        const history = [...prev, newPoint];
+        
+        // Keep only the last 300 points (5 minutes at 1 point per second)
+        if (history.length > 300) {
+          return history.slice(-300);
+        }
+        return history;
+      });
+    }
+  }, [isPeopleDetectionEnabled]);
+      
   const handleTabChange = useCallback((id: string) => {
     setActiveVideoId(id);
     setCurrentTime(0);
     setIsPeopleDetectionEnabled(false); // Disable people detection when switching cameras
     setPeopleCount(0); // Reset people count
+    setPeopleCountHistory([]); // Only reset history when changing videos
   }, []);
   
   const handleAddStreamClick = () => {
@@ -110,7 +145,16 @@ function App() {
   };  
 
   const togglePeopleDetection = useCallback(() => {
-    setIsPeopleDetectionEnabled(prev => !prev);
+    setIsPeopleDetectionEnabled(prev => {
+      const newValue = !prev;
+      // If toggling ON, create new session ID and clear history
+      if (newValue) {
+        setDetectionSessionId('session_' + Date.now());
+        setPeopleCountHistory([]); // Clear history only when re-enabling
+      }
+      // Note: When turning detection OFF, we keep the history intact
+      return newValue;
+    });
   }, []);
 
   const toggleDetectionOverlay = useCallback(() => {
@@ -240,20 +284,40 @@ function App() {
               onToggleOverlay={toggleDetectionOverlay}
             />
 
-            {isPeopleDetectionEnabled && (
-              <div className="mt-2 bg-gray-800 text-white py-2 px-4 rounded-md flex items-center justify-between">
-                <span className="flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                  </svg>
-                  People Detected
-                </span>
-                <span className="bg-blue-600 rounded-full h-8 w-8 flex items-center justify-center font-bold">
-                  {peopleCount}
-                </span>
-              </div>
-            )}
-            
+            <>
+              {isPeopleDetectionEnabled && (
+                <div className="mt-2 bg-gray-800 text-white py-2 px-4 rounded-md flex items-center justify-between">
+                  <span className="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    People Detected
+                  </span>
+                  <span className="bg-blue-600 rounded-full h-8 w-8 flex items-center justify-center font-bold">
+                    {peopleCount}
+                  </span>
+                </div>
+              )}
+              
+              {peopleCountHistory.length > 0 && (
+                <div className="mt-4 bg-white p-4 rounded-lg shadow">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-md font-medium">People Detection Over Time</h3>
+                    {!isPeopleDetectionEnabled && (
+                      <span className="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded-full">
+                        Detection paused
+                      </span>
+                    )}
+                  </div>
+                  <PeopleDetectionGraph 
+                    data={peopleCountHistory} 
+                    sessionId={detectionSessionId}
+                    isPaused={!isPeopleDetectionEnabled}
+                  />
+                </div>
+              )}
+            </>
+
             {/* Latest result display remains the same */}
             {latestResult && (
               <div className="mt-6 bg-white p-4 rounded-lg shadow">
