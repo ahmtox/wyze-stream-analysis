@@ -269,6 +269,8 @@ AI models are optimized for performance:
 
 ### Environment Setup
 
+Note: You must install the wyzely package via source from .whl file. You can ignore the error while installing from requirements, this will still run.
+
 ```bash
 # Backend setup
 cd backend
@@ -286,7 +288,7 @@ Create an .env file in project root
 # API Keys
 ANTHROPIC_API_KEY=your_claude_api_key
 
-# Optional Wyze API credentials for direct camera integration
+# Optional Wyze API credentials for direct camera integration (you need to modify the code)
 EMAIL=your_wyze_email
 PASSWORD=your_wyze_password
 KEYID=your_wyze_keyid

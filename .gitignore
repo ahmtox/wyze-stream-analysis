@@ -179,3 +179,4 @@ anomaly_dataset_test.csv
 __pycache__
 .venv
 *.db
+output
