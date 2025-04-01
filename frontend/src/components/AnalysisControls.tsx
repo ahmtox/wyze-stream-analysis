@@ -7,7 +7,9 @@ interface AnalysisControlsProps {
   isProcessing: boolean;
   isLiveStream?: boolean;
   isPeopleDetectionEnabled?: boolean;
+  showDetectionOverlay?: boolean;
   onTogglePeopleDetection?: () => void;
+  onToggleOverlay?: () => void;
 }
 
 export default function AnalysisControls({ 
@@ -16,7 +18,9 @@ export default function AnalysisControls({
   isProcessing,
   isLiveStream = false,
   isPeopleDetectionEnabled = false,
-  onTogglePeopleDetection
+  showDetectionOverlay = true,
+  onTogglePeopleDetection,
+  onToggleOverlay
 }: AnalysisControlsProps) {
   const [isPromptModalOpen, setIsPromptModalOpen] = useState(false);
   const [customPrompt, setCustomPrompt] = useState<string | undefined>();
@@ -90,11 +94,38 @@ export default function AnalysisControls({
                   {isPeopleDetectionEnabled ? 'Enabled' : 'Disabled'}
                 </button>
               </div>
+              
               <p className="text-xs text-gray-500 mt-1">
                 {isPeopleDetectionEnabled 
-                  ? "Detection is active: people will be highlighted in the stream."
+                  ? "Detection is active: people will be counted in the stream."
                   : "Enable to detect and count people in the live stream."}
               </p>
+
+              {/* Add overlay toggle option when detection is enabled */}
+              {isPeopleDetectionEnabled && onToggleOverlay && (
+                <div className="mt-3 pt-2 border-t border-gray-100">
+                  <div className="flex items-center justify-between">
+                    <label htmlFor="overlay-toggle" className="text-sm font-medium text-gray-600">
+                      Detection Overlay
+                    </label>
+                    <button 
+                      onClick={onToggleOverlay}
+                      className={`px-3 py-1 text-xs rounded-full ${
+                        showDetectionOverlay 
+                          ? 'bg-blue-600 text-white' 
+                          : 'bg-gray-200 text-gray-700'
+                      }`}
+                    >
+                      {showDetectionOverlay ? 'Visible' : 'Hidden'}
+                    </button>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {showDetectionOverlay 
+                      ? "Bounding boxes are shown around detected people." 
+                      : "Detection runs in background without visual overlay."}
+                  </p>
+                </div>
+              )}
             </div>
           )}
         </div>
