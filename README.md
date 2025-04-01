@@ -24,6 +24,7 @@ cd backend
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
+pip install wyzely-0.1.1-py3-none-any.whl
 
 # Frontend setup
 cd frontend
