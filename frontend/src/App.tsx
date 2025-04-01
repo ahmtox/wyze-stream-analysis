@@ -240,7 +240,7 @@ function App() {
               onToggleOverlay={toggleDetectionOverlay}
             />
 
-            {getCurrentVideoSource()?.isHlsStream && isPeopleDetectionEnabled && (
+            {isPeopleDetectionEnabled && (
               <div className="mt-2 bg-gray-800 text-white py-2 px-4 rounded-md flex items-center justify-between">
                 <span className="flex items-center">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -312,8 +312,8 @@ function App() {
               isLiveStream={getCurrentVideoSource()?.isHlsStream || false}
               isPeopleDetectionEnabled={isPeopleDetectionEnabled}
               showDetectionOverlay={showDetectionOverlay}
-              onTogglePeopleDetection={getCurrentVideoSource()?.isHlsStream ? togglePeopleDetection : undefined}
-              onToggleOverlay={getCurrentVideoSource()?.isHlsStream && isPeopleDetectionEnabled ? toggleDetectionOverlay : undefined}
+              onTogglePeopleDetection={togglePeopleDetection}
+              onToggleOverlay={isPeopleDetectionEnabled ? toggleDetectionOverlay : undefined}
             />
             
             {/* Show HLS stream info if current source is HLS */}

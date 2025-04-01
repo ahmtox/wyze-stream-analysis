@@ -384,7 +384,7 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(({
       />
       
       {/* People detection overlay */}
-      {videoSource?.isHlsStream && !error && !connecting && !loading && videoRef.current && (
+      {!error && !connecting && !loading && videoRef.current && (
         <PeopleDetection 
           videoRef={videoRef as React.RefObject<HTMLVideoElement>}
           isEnabled={isPeopleDetectionEnabled}

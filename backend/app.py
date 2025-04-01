@@ -185,11 +185,11 @@ def serve_video_by_filename(filename):
     """Serve a specified video file"""
     try:
         # Security: Only allow specific video files
-        allowed_videos = ["cat_food.mp4", "gauge.mp4", "pedestrians.mp4", "football.mp4", "thermometer.mp4"]
+        allowed_videos = ["cat_food.mp4", "gauge.mp4", "pedestrians.mp4", "football.mp4", "thermometer.mp4", "times_square.mp4"]
         if filename not in allowed_videos:
             print(f"ERROR: Requested video {filename} is not in allowed list")
             return jsonify({"error": "Video not found"}), 404
-            
+                    
         # Try multiple locations for the video
         possible_paths = [
             f"{parent_dir}/{filename}",
@@ -261,6 +261,12 @@ def list_videos():
             "name": "Weather Cam",
             "filename": "thermometer.mp4",
             "description": "Temperature monitoring"
+        },
+        {
+            "id": "times_square",
+            "name": "Times Square Cam",
+            "filename": "times_square.mp4",
+            "description": "Times Square street view"
         }
     ]
     return jsonify(videos)

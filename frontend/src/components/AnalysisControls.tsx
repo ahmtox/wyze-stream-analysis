@@ -77,7 +77,7 @@ export default function AnalysisControls({
           )}
           
           {/* People Detection Toggle for Live Streams */}
-          {isLiveStream && onTogglePeopleDetection && (
+          {onTogglePeopleDetection && (
             <div className="mt-3 border-t pt-3 border-gray-100">
               <div className="flex items-center justify-between">
                 <label htmlFor="people-detection" className="text-sm font-medium text-gray-600">
@@ -97,8 +97,8 @@ export default function AnalysisControls({
               
               <p className="text-xs text-gray-500 mt-1">
                 {isPeopleDetectionEnabled 
-                  ? "Detection is active: people will be counted in the stream."
-                  : "Enable to detect and count people in the live stream."}
+                  ? "Detection is active: people will be counted in the video."
+                  : "Enable to detect and count people in the video."}
               </p>
 
               {/* Add overlay toggle option when detection is enabled */}

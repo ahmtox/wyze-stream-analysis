@@ -172,12 +172,10 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
 /Wyze x HCCF Prompt
 .env
 anomaly_dataset_test.csv
 __pycache__
-<<<<<<< HEAD
 .venv
-=======
-.venv
->>>>>>> keep-local-commit
+*.db
