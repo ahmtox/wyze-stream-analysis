@@ -4,6 +4,55 @@
 
 Wyze Stream Analysis is a comprehensive video analytics platform that combines state-of-the-art computer vision algorithms with advanced large language model (LLM) capabilities to provide real-time and retrospective analysis of security camera feeds. The system processes both archived video files and live HLS streams, performing frame analysis, object detection, and temporal pattern recognition to deliver actionable insights about camera footage.
 
+
+## Installation and Deployment
+
+### Prerequisites
+
+- Python 3.9+
+- Node.js 16+
+- CUDA-compatible GPU (optional, for accelerated backend processing)
+- Anthropic API key
+
+### Environment Setup
+
+Note: You must install the wyzely package via source from .whl file. You can ignore the error while installing from requirements, this will still run.
+
+```bash
+# Backend setup
+cd backend
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -r requirements.txt
+
+# Frontend setup
+cd frontend
+npm install
+```
+
+Create an .env file in project root
+```
+# API Keys
+ANTHROPIC_API_KEY=your_claude_api_key
+
+# Optional Wyze API credentials for direct camera integration (you need to modify the code)
+EMAIL=your_wyze_email
+PASSWORD=your_wyze_password
+KEYID=your_wyze_keyid
+APIKEY=your_wyze_apikey
+```
+
+Running the application
+```bash
+# Start the backend
+cd backend
+python app.py
+
+# Start the frontend (in a new terminal)
+cd frontend
+npm run dev
+```
+
 ## AI Models
 
 ### Primary Analysis Model: Claude 3 Opus
@@ -194,51 +243,3 @@ The complete data flow for analysis operations follows this pipeline:
    - Written to disk
    - Returned to frontend
 8. Frontend updates UI with analysis results and frame image
-
-## Installation and Deployment
-
-### Prerequisites
-
-- Python 3.9+
-- Node.js 16+
-- CUDA-compatible GPU (optional, for accelerated backend processing)
-- Anthropic API key
-
-### Environment Setup
-
-Note: You must install the wyzely package via source from .whl file. You can ignore the error while installing from requirements, this will still run.
-
-```bash
-# Backend setup
-cd backend
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-pip install -r requirements.txt
-
-# Frontend setup
-cd frontend
-npm install
-```
-
-Create an .env file in project root
-```
-# API Keys
-ANTHROPIC_API_KEY=your_claude_api_key
-
-# Optional Wyze API credentials for direct camera integration (you need to modify the code)
-EMAIL=your_wyze_email
-PASSWORD=your_wyze_password
-KEYID=your_wyze_keyid
-APIKEY=your_wyze_apikey
-```
-
-Running the application
-```bash
-# Start the backend
-cd backend
-python app.py
-
-# Start the frontend (in a new terminal)
-cd frontend
-npm run dev
-```
